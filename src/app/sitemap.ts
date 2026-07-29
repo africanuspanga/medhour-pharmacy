@@ -2,6 +2,9 @@ import type { MetadataRoute } from "next";
 import { SITE } from "@/lib/constants";
 import { getAllProductSlugs, getCategories } from "@/lib/data";
 
+// Pin as static so sitemap.xml is prerendered (required by `output: "export"`).
+export const dynamic = "force-static";
+
 const staticRoutes: { path: string; changeFrequency: "daily" | "weekly" | "monthly"; priority: number }[] = [
   { path: "/", changeFrequency: "daily", priority: 1 },
   { path: "/shop", changeFrequency: "daily", priority: 0.9 },

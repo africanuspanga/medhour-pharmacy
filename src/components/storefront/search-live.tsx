@@ -4,9 +4,27 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Product } from "@/lib/types";
+import { FALLBACK_PRODUCTS } from "@/lib/fallback-data";
 import { ProductCard } from "@/components/product/product-card";
 import { EmptyState, Spinner } from "@/components/ui/feedback";
 import { Input } from "@/components/ui/field";
+
+/** Local search used when /api/search is unavailable (e.g. the static demo export). */
+function fallbackSearch(query: string): Product[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return [];
+  return FALLBACK_PRODUCTS.filter(
+    (p) =>
+      p.is_active &&
+      (p.name.toLowerCase().includes(q) ||
+        p.generic_name?.toLowerCase().includes(q) ||
+        p.brand?.name.toLowerCase().includes(q) ||
+        p.category?.name.toLowerCase().includes(q) ||
+        p.description?.toLowerCase().includes(q) ||
+        p.short_description?.toLowerCase().includes(q) ||
+        p.keywords?.some((k) => k.toLowerCase().includes(q)))
+  );
+}
 
 /** Live search — fetches /api/search with a 300ms debounce, no full navigation. */
 export function SearchLive({
@@ -39,10 +57,12 @@ export function SearchLive({
       setLoading(true);
       try {
         const res = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`);
+        if (!res.ok) throw new Error(`search failed: ${res.status}`);
         const data = (await res.json()) as { products: Product[] };
         if (id === requestId.current) setResults(data.products ?? []);
       } catch {
-        if (id === requestId.current) setResults([]);
+        // Static demo export has no /api/search — search the local catalogue.
+        if (id === requestId.current) setResults(fallbackSearch(trimmed));
       } finally {
         if (id === requestId.current) setLoading(false);
       }

@@ -1,0 +1,9 @@
+# Render blueprint — static demo build of the Medhour Pharmacy storefront.
+# The full dynamic app (Supabase, admin, checkout) still deploys on Vercel.
+services:
+  - type: web
+    name: medhour-pharmacy-demo
+    runtime: static
+    buildCommand: npm ci && npm run build:static
+    staticPublishPath: out
+    pullRequestPreviewsEnabled: true

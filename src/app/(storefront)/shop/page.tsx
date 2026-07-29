@@ -48,7 +48,9 @@ export default async function ShopPage({
 }: {
   searchParams: Promise<ShopSearchParams>;
 }) {
-  const sp = await searchParams;
+  // Static demo export: query params can't be read at prerender time — render
+  // the unfiltered first page (search/filtering then runs client-side).
+  const sp: ShopSearchParams = process.env.BUILD_STATIC === "1" ? {} : await searchParams;
   const filters = parseFilters(sp);
   const [categories, result] = await Promise.all([getCategories(), getProducts(filters)]);
 

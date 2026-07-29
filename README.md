@@ -104,6 +104,41 @@ supabase/
 2. Add the same environment variables from `.env.local` in Vercel → Settings → Environment Variables.
 3. Deploy. Set `NEXT_PUBLIC_SITE_URL` to the production domain so metadata, canonicals and the sitemap resolve correctly.
 
+## Deploy a static demo on Render
+
+A read-only static export of the storefront — for stakeholder demos — can be
+hosted on Render as a static site. It uses the local catalogue in
+`src/lib/fallback-data.ts` (no Supabase needed).
+
+**What works in the static demo:** browsing home/shop/categories/product pages,
+search (falls back to filtering the local catalogue in the browser), and the
+guest cart (localStorage).
+
+**What requires the full deployment (Vercel + Supabase):** checkout and order
+confirmation, accounts (login/register/profile/orders/addresses), prescription
+upload, order tracking, the contact form, and the admin dashboard. Links to
+those pages 404 in the static build because they are excluded from it.
+
+**Local run:**
+
+```bash
+npm run build:static   # produces out/
+npx serve out          # or python3 -m http.server -d out
+```
+
+`scripts/build-static.mjs` temporarily moves the server-only paths
+(`src/middleware.ts`, `src/app/admin`, `src/app/api`, `src/app/auth`,
+`(storefront)/account`, `checkout`, `login`, `register`, `forgot-password`,
+`reset-password`, `track-order`, `prescriptions`, `contact`) into
+`.static-exclude/`, runs `next build` with `BUILD_STATIC=1` (which enables
+`output: "export"`, unoptimized images and trailing slashes in
+`next.config.ts`), then always restores them. `npm run build` and
+`npm run dev` are unaffected.
+
+**Render:** the repo includes `render.yaml` (blueprint). In Render choose
+New → Blueprint, point it at the repo, and it creates a static site with
+`npm ci && npm run build:static` publishing `out/`.
+
 ## Compliance notes
 
 - Medicine information pages display the medicine disclaimer; the site is not a substitute for professional medical advice.

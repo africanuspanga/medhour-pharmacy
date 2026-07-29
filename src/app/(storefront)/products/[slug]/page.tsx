@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProductBySlug, getRelatedProducts } from "@/lib/data";
+import { getAllProductSlugs, getProductBySlug, getRelatedProducts } from "@/lib/data";
 import { MEDICINE_DISCLAIMER, SITE, WHATSAPP_URL } from "@/lib/constants";
 import { effectivePrice, formatTzs, stockStatus } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,12 @@ import { ProductPurchase } from "@/components/storefront/product-purchase";
 
 interface Props {
   params: Promise<{ slug: string }>;
+}
+
+/** Required for `output: "export"` (static demo build); harmless otherwise. */
+export async function generateStaticParams() {
+  const slugs = await getAllProductSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
