@@ -126,6 +126,20 @@ const PROMOS: {
     ),
   },
   {
+    title: "Migraine & Head Pain Relief",
+    text: "Trusted relief for headaches, migraines and body pain.",
+    href: "/categories/pain-relief",
+    image: "/images/promo-headache.jpg",
+    imageAlt: "Man with a headache — pain relief at Medhour Pharmacy",
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M13 10V3L4 14h7v7l9-11h-7z"
+      />
+    ),
+  },
+  {
     title: "Vitamins and Daily Wellness",
     text: "Support your everyday health with trusted wellness products.",
     href: "/categories/vitamins-supplements",
@@ -179,14 +193,15 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+          <div className="relative mx-auto aspect-[3/4] w-full max-w-xs sm:max-w-sm">
+            <div className="absolute inset-x-4 bottom-0 top-10 rounded-full bg-white/10" aria-hidden />
             <Image
-              src="/images/hero-headache.jpg"
-              alt="Medhour Pharmacy customer care"
+              src="/images/hero-doctor.png"
+              alt="Medhour Pharmacy pharmacist"
               fill
               priority
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
+              sizes="(max-width: 1024px) 90vw, 40vw"
+              className="object-contain object-bottom"
             />
           </div>
         </div>
@@ -258,7 +273,7 @@ export default async function HomePage() {
       </section>
 
       {/* Promotional banners */}
-      <section className="mt-14 grid gap-4 md:grid-cols-2">
+      <section className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {PROMOS.map((promo) => (
           <Link
             key={promo.href}
