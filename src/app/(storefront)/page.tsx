@@ -178,19 +178,6 @@ export default async function HomePage() {
               >
                 Shop Now
               </Link>
-              <Link
-                href="/prescriptions/upload"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/70 px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-white/10"
-              >
-                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"
-                  />
-                </svg>
-                Upload Prescription
-              </Link>
             </div>
           </div>
           <div className="relative mx-auto aspect-[3/4] w-full max-w-xs sm:max-w-sm">

@@ -84,16 +84,6 @@ export function Header() {
         {/* Actions */}
         <div className="flex items-center gap-1 sm:gap-2">
           <Link
-            href="/prescriptions/upload"
-            className="hidden items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-base font-semibold text-white hover:bg-brand-dark md:inline-flex"
-          >
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3" />
-            </svg>
-            Upload Prescription
-          </Link>
-
-          <Link
             href="/cart"
             aria-label="Shopping cart"
             className="relative inline-flex h-11 w-11 items-center justify-center rounded-full text-ink hover:bg-surface"
@@ -168,15 +158,6 @@ export function Header() {
                 </Link>
               </li>
             ))}
-            <li>
-              <Link
-                href="/prescriptions/upload"
-                onClick={() => setMenuOpen(false)}
-                className="mt-2 block rounded-full bg-brand px-4 py-2.5 text-center text-sm font-semibold text-white"
-              >
-                Upload Prescription
-              </Link>
-            </li>
           </ul>
         </nav>
       )}
