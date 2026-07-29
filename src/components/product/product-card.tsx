@@ -54,7 +54,7 @@ export function ProductCard({ product }: { product: Product }) {
           <AddToCartButton product={product} size="sm" className="flex-1" />
           <Link
             href={`/products/${product.slug}`}
-            className="hidden items-center justify-center rounded-full border border-brand px-3 text-sm font-semibold text-brand transition-colors hover:bg-brand-light sm:inline-flex"
+            className="inline-flex items-center justify-center rounded-full border border-brand px-3 text-sm font-semibold text-brand transition-colors hover:bg-brand-light"
           >
             View
           </Link>

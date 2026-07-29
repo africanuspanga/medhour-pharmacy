@@ -57,10 +57,10 @@ export function Header() {
           ))}
         </nav>
 
-        {/* Search */}
+        {/* Search (desktop / tablet) */}
         <form
           action="/search"
-          className="relative ml-auto hidden min-w-0 flex-1 max-w-xs sm:block md:max-w-sm"
+          className="relative ml-auto hidden min-w-0 flex-1 max-w-xs md:block lg:max-w-sm"
           role="search"
         >
           <input
@@ -135,18 +135,27 @@ export function Header() {
         </div>
       </div>
 
+      {/* Search (mobile — always visible) */}
+      <form action="/search" className="relative px-4 pb-3 md:hidden" role="search">
+        <input
+          type="search"
+          name="q"
+          placeholder="Search medicines, health products…"
+          className="w-full rounded-full border border-ink/15 bg-surface py-2.5 pl-11 pr-4 text-base focus:border-brand focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand/20"
+          aria-label="Search products"
+        />
+        <svg
+          className="pointer-events-none absolute left-8 top-[1.15rem] h-5 w-5 -translate-y-1/2 text-ink/40"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+        >
+          <circle cx="11" cy="11" r="7" />
+          <path strokeLinecap="round" d="M21 21l-4.3-4.3" />
+        </svg>
+      </form>
+
       {/* Mobile nav */}
       {menuOpen && (
         <nav className="border-t border-ink/8 bg-white px-4 py-3 lg:hidden" aria-label="Mobile">
-          <form action="/search" className="mb-3 sm:hidden" role="search">
-            <input
-              type="search"
-              name="q"
-              placeholder="Search medicines, health products…"
-              className="w-full rounded-full border border-ink/15 bg-surface px-4 py-2 text-sm focus:border-brand focus:outline-none"
-              aria-label="Search products"
-            />
-          </form>
           <ul className="flex flex-col">
             {NAV.map((item) => (
               <li key={item.href}>

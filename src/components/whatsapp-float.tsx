@@ -9,7 +9,7 @@ export function WhatsAppFloat() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with Medhour Pharmacy on WhatsApp"
-      className="fixed bottom-5 right-5 z-40 block h-14 w-14 transition-transform hover:scale-105 sm:h-16 sm:w-16"
+      className="fixed bottom-24 right-4 z-40 block h-14 w-14 transition-transform hover:scale-105 sm:h-16 sm:w-16 lg:bottom-5 lg:right-5"
     >
       <Image
         src="/whatsapp.png"
