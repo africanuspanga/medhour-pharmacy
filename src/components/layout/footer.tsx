@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { SITE, WHATSAPP_URL, MEDICINE_DISCLAIMER } from "@/lib/constants";
+import { SITE, WHATSAPP_URL } from "@/lib/constants";
 
 const SHOP_LINKS = [
   { href: "/shop", label: "All Products" },
@@ -80,8 +80,7 @@ export function Footer() {
 
       <div className="border-t border-ink/8">
         <div className="mx-auto max-w-7xl px-4 py-5 lg:px-8">
-          <p className="text-xs leading-relaxed text-ink/50">{MEDICINE_DISCLAIMER}</p>
-          <p className="mt-2 text-xs text-ink/50">
+          <p className="text-xs text-ink/50">
             © {new Date().getFullYear()} {SITE.name}. All rights reserved.
           </p>
         </div>

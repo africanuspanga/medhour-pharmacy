@@ -10,13 +10,20 @@ import type { Brand, Category, Product } from "@/lib/types";
 
 const NOW = new Date().toISOString();
 
-function cat(id: string, name: string, slug: string, sort_order: number, description: string): Category {
+function cat(
+  id: string,
+  name: string,
+  slug: string,
+  sort_order: number,
+  description: string,
+  image_url: string
+): Category {
   return {
     id: `cat-${id}`,
     name,
     slug,
     description,
-    image_url: null,
+    image_url,
     icon: null,
     sort_order,
     is_active: true,
@@ -26,14 +33,14 @@ function cat(id: string, name: string, slug: string, sort_order: number, descrip
 }
 
 export const FALLBACK_CATEGORIES: Category[] = [
-  cat("1", "Pain Relief", "pain-relief", 1, "Relief from headaches, body pain and fever."),
-  cat("2", "Cold, Flu and Allergy", "cold-flu-allergy", 2, "Cold, flu, cough and allergy relief products."),
-  cat("3", "Vitamins and Supplements", "vitamins-supplements", 3, "Daily vitamins, minerals and supplements."),
-  cat("4", "Mother and Baby", "mother-baby", 4, "Everything for mothers, babies and growing families."),
-  cat("5", "Personal Care", "personal-care", 5, "Skin, hair, sun and everyday personal care."),
-  cat("6", "First Aid", "first-aid", 6, "Antiseptics, bandages and first-aid essentials."),
-  cat("7", "Digestive Health", "digestive-health", 7, "Rehydration, antacids and digestive care."),
-  cat("8", "Medical Devices", "medical-devices", 8, "Thermometers, monitors and home health devices."),
+  cat("1", "Pain Relief", "pain-relief", 1, "Relief from headaches, body pain and fever.", "/product-images/panadol-advance-500mg.avif"),
+  cat("2", "Cold, Flu and Allergy", "cold-flu-allergy", 2, "Cold, flu, cough and allergy relief products.", "/product-images/cetirizine-10mg.webp"),
+  cat("3", "Vitamins and Supplements", "vitamins-supplements", 3, "Daily vitamins, minerals and supplements.", "/product-images/vitamin-c-1000mg.png"),
+  cat("4", "Mother and Baby", "mother-baby", 4, "Everything for mothers, babies and growing families.", "/product-images/pampers-baby-diapers.jpg"),
+  cat("5", "Personal Care", "personal-care", 5, "Skin, hair, sun and everyday personal care.", "/product-images/nivea-sun-protect-spf50.jpg"),
+  cat("6", "First Aid", "first-aid", 6, "Antiseptics, bandages and first-aid essentials.", "/product-images/dettol-antiseptic-250ml.jpg"),
+  cat("7", "Digestive Health", "digestive-health", 7, "Rehydration, antacids and digestive care.", "/product-images/gaviscon-liquid-150ml.webp"),
+  cat("8", "Medical Devices", "medical-devices", 8, "Thermometers, monitors and home health devices.", "/product-images/blood-pressure-monitor.jpg"),
 ];
 
 const BRANDS: Record<string, Brand> = {

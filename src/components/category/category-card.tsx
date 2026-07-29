@@ -1,6 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Category } from "@/lib/types";
-import { ProductImage } from "@/components/product/product-image";
 import { ImagePlaceholder } from "@/components/ui/image-placeholder";
 
 export function CategoryCard({ category }: { category: Category }) {
@@ -11,7 +11,13 @@ export function CategoryCard({ category }: { category: Category }) {
     >
       <div className="relative h-24 w-24 overflow-hidden rounded-full bg-brand-light">
         {category.image_url ? (
-          <ProductImage src={category.image_url} alt={category.name} className="absolute inset-0" />
+          <Image
+            src={category.image_url}
+            alt={category.name}
+            fill
+            sizes="96px"
+            className="object-cover"
+          />
         ) : (
           <ImagePlaceholder label={category.name} className="rounded-full" />
         )}

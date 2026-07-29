@@ -3,15 +3,15 @@
 -- classification MUST be verified by the pharmacy before publication.
 
 -- ============ Categories ============
-insert into public.categories (name, slug, description, icon, sort_order) values
-  ('Pain Relief', 'pain-relief', 'Relief from headaches, body pain and fever.', 'pill', 1),
-  ('Cold, Flu and Allergy', 'cold-flu-allergy', 'Cold, flu, cough and allergy relief products.', 'thermometer', 2),
-  ('Vitamins and Supplements', 'vitamins-supplements', 'Daily vitamins, minerals and supplements.', 'sparkles', 3),
-  ('Mother and Baby', 'mother-baby', 'Everything for mothers, babies and growing families.', 'baby', 4),
-  ('Personal Care', 'personal-care', 'Skin, hair, sun and everyday personal care.', 'heart', 5),
-  ('First Aid', 'first-aid', 'Antiseptics, bandages and first-aid essentials.', 'cross', 6),
-  ('Digestive Health', 'digestive-health', 'Rehydration, antacids and digestive care.', 'stomach', 7),
-  ('Medical Devices', 'medical-devices', 'Thermometers, monitors and home health devices.', 'monitor', 8)
+insert into public.categories (name, slug, description, image_url, icon, sort_order) values
+  ('Pain Relief', 'pain-relief', 'Relief from headaches, body pain and fever.', '/product-images/panadol-advance-500mg.avif', 'pill', 1),
+  ('Cold, Flu and Allergy', 'cold-flu-allergy', 'Cold, flu, cough and allergy relief products.', '/product-images/cetirizine-10mg.webp', 'thermometer', 2),
+  ('Vitamins and Supplements', 'vitamins-supplements', 'Daily vitamins, minerals and supplements.', '/product-images/vitamin-c-1000mg.png', 'sparkles', 3),
+  ('Mother and Baby', 'mother-baby', 'Everything for mothers, babies and growing families.', '/product-images/pampers-baby-diapers.jpg', 'baby', 4),
+  ('Personal Care', 'personal-care', 'Skin, hair, sun and everyday personal care.', '/product-images/nivea-sun-protect-spf50.jpg', 'heart', 5),
+  ('First Aid', 'first-aid', 'Antiseptics, bandages and first-aid essentials.', '/product-images/dettol-antiseptic-250ml.jpg', 'cross', 6),
+  ('Digestive Health', 'digestive-health', 'Rehydration, antacids and digestive care.', '/product-images/gaviscon-liquid-150ml.webp', 'stomach', 7),
+  ('Medical Devices', 'medical-devices', 'Thermometers, monitors and home health devices.', '/product-images/blood-pressure-monitor.jpg', 'monitor', 8)
 on conflict (slug) do nothing;
 
 -- ============ Brands ============
