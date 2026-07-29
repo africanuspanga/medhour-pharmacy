@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useState } from "react";
 import { useCartTotals } from "@/lib/cart-store";
 import { useMounted } from "@/lib/use-mounted";
-import { WHATSAPP_URL } from "@/lib/constants";
 
 const NAV = [
   { href: "/", label: "Home" },
@@ -93,18 +92,6 @@ export function Header() {
             </svg>
             Upload Prescription
           </Link>
-
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Chat on WhatsApp"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-brand hover:bg-brand-light"
-          >
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12.04 2a9.9 9.9 0 00-8.4 15.2L2 22l4.9-1.6A9.9 9.9 0 1012.04 2zm0 1.8a8.1 8.1 0 110 16.2 8 8 0 01-4.1-1.1l-.3-.2-2.9.9 1-2.8-.2-.3a8.1 8.1 0 016.5-12.7zm-3.4 4c-.2 0-.5 0-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.2 5 4.4 2.4.9 2.9.7 3.4.7.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.4l-2-.9c-.3-.2-.5-.2-.7.1l-1 1.2c-.2.2-.4.3-.7.1a9.5 9.5 0 01-2.7-1.7 10 10 0 01-1.9-2.3c-.2-.3 0-.5.1-.7l.5-.6c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5L9.6 8.2c-.2-.4-.4-.4-.6-.4z" />
-            </svg>
-          </a>
 
           <Link
             href="/cart"
