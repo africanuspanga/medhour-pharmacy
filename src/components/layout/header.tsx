@@ -82,7 +82,7 @@ export function Header() {
         </form>
 
         {/* Actions */}
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="ml-auto flex items-center gap-1 sm:gap-2 md:ml-0">
           <Link
             href="/cart"
             aria-label="Shopping cart"
@@ -99,7 +99,7 @@ export function Header() {
           <Link
             href="/account"
             aria-label="Account"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full text-ink hover:bg-surface"
+            className="hidden h-11 w-11 items-center justify-center rounded-full text-ink hover:bg-surface lg:inline-flex"
           >
             <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="8" r="4" />
