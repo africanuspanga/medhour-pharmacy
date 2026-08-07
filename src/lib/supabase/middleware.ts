@@ -28,11 +28,15 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protect the admin area — unauthenticated users go to login.
-  if (!user && request.nextUrl.pathname.startsWith("/admin")) {
+  // Protect the admin area — unauthenticated users go to the admin login.
+  if (
+    !user &&
+    request.nextUrl.pathname.startsWith("/admin") &&
+    request.nextUrl.pathname !== "/admin/login"
+  ) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("next", request.nextUrl.pathname);
+    url.pathname = "/admin/login";
+    url.search = "";
     return NextResponse.redirect(url);
   }
 

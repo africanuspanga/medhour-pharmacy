@@ -8,6 +8,8 @@ export interface AuthResult {
   error?: string;
   /** true when the user must confirm their email before signing in */
   confirmEmail?: boolean;
+  /** true when the signed-in user is an admin (used for post-login redirect) */
+  isAdmin?: boolean;
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -56,9 +58,15 @@ export async function signIn(email: string, password: string): Promise<AuthResul
   if (!password) return { error: "Please enter your password." };
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: friendlyAuthError(error.message) };
-  return {};
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", data.user.id)
+    .single();
+  return { isAdmin: profile?.is_admin === true };
 }
 
 export async function signOut(): Promise<void> {
