@@ -12,6 +12,7 @@ const links = [
   { href: "/admin/orders", label: "Orders" },
   { href: "/admin/prescriptions", label: "Prescriptions" },
   { href: "/admin/inventory", label: "Inventory" },
+  { href: "/admin/messages", label: "Messages" },
 ];
 
 function isActive(pathname: string, href: string) {

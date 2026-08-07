@@ -1,5 +1,7 @@
 "use server";
 
+import { createAdminClient } from "@/lib/supabase/admin";
+
 export interface ContactFormState {
   status: "idle" | "success" | "error";
   message?: string;
@@ -13,9 +15,9 @@ export interface ContactFormState {
 /**
  * Handles the contact form on /contact.
  *
- * Note: no email/notification service is configured yet, so a valid
- * submission is simply acknowledged. Wire this up to an email service
- * (e.g. Resend, SES) or persist messages to a Supabase table later.
+ * Valid submissions are stored in the `contact_messages` table and can be
+ * reviewed in the admin dashboard (/admin/messages). The service-role client
+ * is used because submitters are anonymous guests.
  */
 export async function submitContactForm(
   _prevState: ContactFormState,
@@ -34,7 +36,20 @@ export async function submitContactForm(
     return { status: "error", message: "Please fix the errors below.", fieldErrors };
   }
 
-  // TODO: send an email notification or store the message in Supabase here.
+  try {
+    const supabase = createAdminClient();
+    const { error } = await supabase
+      .from("contact_messages")
+      .insert({ name, contact, message });
+    if (error) throw error;
+  } catch (err) {
+    console.error("submitContactForm failed:", err);
+    return {
+      status: "error",
+      message: "Something went wrong sending your message. Please try again or reach us on WhatsApp.",
+    };
+  }
+
   return {
     status: "success",
     message: "Thank you for your message. We will get back to you as soon as we can.",

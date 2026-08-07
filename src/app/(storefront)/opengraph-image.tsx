@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
-// Pin as static so the image is prerendered (required by `output: "export"`).
+// The OG image never changes — prerender it once.
 export const dynamic = "force-static";
 export const alt = "Medhour Pharmacy — Your Trusted Pharmacy in Dar es Salaam";
 export const size = { width: 1200, height: 630 };

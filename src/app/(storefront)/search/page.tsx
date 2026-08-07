@@ -12,9 +12,7 @@ export default async function SearchPage({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
-  // Static demo export: query params can't be read at prerender time — live
-  // search below runs fully client-side against the local catalogue instead.
-  const { q }: { q?: string } = process.env.BUILD_STATIC === "1" ? {} : await searchParams;
+  const { q }: { q?: string } = await searchParams;
   const query = q?.trim() ?? "";
   const initialResults = query ? await searchProducts(query, 24) : [];
 

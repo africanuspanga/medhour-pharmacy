@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCategories, getCategoryBySlug, getProducts } from "@/lib/data";
+import { getCategoryBySlug, getProducts } from "@/lib/data";
 import { SITE } from "@/lib/constants";
 import { ProductCard } from "@/components/product/product-card";
 import { EmptyState } from "@/components/ui/feedback";
@@ -10,12 +10,6 @@ import { Pagination } from "@/components/storefront/pagination";
 interface Props {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ page?: string }>;
-}
-
-/** Required for `output: "export"` (static demo build); harmless otherwise. */
-export async function generateStaticParams() {
-  const categories = await getCategories();
-  return categories.map((category) => ({ slug: category.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -32,8 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CategoryPage({ params, searchParams }: Props) {
   const { slug } = await params;
-  // Static demo export: query params can't be read at prerender time — render page 1.
-  const sp: { page?: string } = process.env.BUILD_STATIC === "1" ? {} : await searchParams;
+  const sp: { page?: string } = await searchParams;
   const category = await getCategoryBySlug(slug);
   if (!category || !category.is_active) notFound();
 

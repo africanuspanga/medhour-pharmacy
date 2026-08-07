@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 import { SITE } from "@/lib/constants";
 import { getAllProductSlugs, getCategories } from "@/lib/data";
 
-// Pin as static so sitemap.xml is prerendered (required by `output: "export"`).
-export const dynamic = "force-static";
+// Regenerate periodically so new products/categories appear without a redeploy.
+export const revalidate = 3600;
 
 const staticRoutes: { path: string; changeFrequency: "daily" | "weekly" | "monthly"; priority: number }[] = [
   { path: "/", changeFrequency: "daily", priority: 1 },
@@ -31,8 +31,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route.priority,
   }));
 
-  // Dynamic routes depend on Supabase env vars, which may be absent at build
-  // time — fall back to static routes only if the fetch fails.
+  // Catalogue routes come from Supabase; fall back to static routes only if
+  // the fetch fails so the sitemap never breaks.
   try {
     const [categories, productSlugs] = await Promise.all([getCategories(), getAllProductSlugs()]);
 

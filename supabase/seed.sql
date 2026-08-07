@@ -218,9 +218,9 @@ on conflict (slug) do nothing;
 
 -- ============ Site settings ============
 insert into public.site_settings (key, value) values
-  ('phone', '+255 700 000 000'),
-  ('whatsapp', '+255700000000'),
-  ('email', 'info@medhourpharmacy.co.tz'),
+  ('phone', '+255 716 221 692'),
+  ('whatsapp', '+255716221692'),
+  ('email', 'info@medhour.co.tz'),
   ('opening_hours', 'Mon–Sat: 8:00 – 20:00, Sun: 9:00 – 18:00'),
   ('delivery_fee_dar', '3000')
 on conflict (key) do nothing;

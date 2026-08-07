@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE } from "@/lib/constants";
 
-// Pin as static so robots.txt is prerendered (required by `output: "export"`).
+// robots.txt never changes — prerender it once.
 export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {

@@ -221,6 +221,15 @@ export interface SiteSetting {
   updated_at: string;
 }
 
+export interface ContactMessage {
+  id: UUID;
+  name: string;
+  contact: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+}
+
 // ---- Cart (client-side) ----
 
 export interface LocalCartItem {

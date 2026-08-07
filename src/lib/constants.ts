@@ -3,7 +3,7 @@ export const SITE = {
   tagline: "Your Trusted Pharmacy in Dar es Salaam",
   description:
     "Order medicines, healthcare products, personal-care essentials and wellness products from Medhour Pharmacy in Posta, Dar es Salaam.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://medhourpharmacy.co.tz",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://medhour.co.tz",
   address: {
     name: "Medhour Pharmacy",
     building: "Benjamin Tower",
@@ -11,10 +11,10 @@ export const SITE = {
     city: "Dar es Salaam",
     country: "Tanzania",
   },
-  // Placeholders — replace with the pharmacy's real contact details.
-  phone: "+255 700 000 000",
-  whatsapp: "+255700000000",
-  email: "info@medhourpharmacy.co.tz",
+  // The pharmacy's real contact details (shown on /contact).
+  phone: "+255 716 221 692",
+  whatsapp: "+255716221692",
+  email: "info@medhour.co.tz",
   openingHours: "Mon–Sat: 8:00 – 20:00, Sun: 9:00 – 18:00",
   mapsEmbedUrl:
     "https://www.google.com/maps?q=Benjamin+Tower,+Azikiwe+Street,+Posta,+Dar+es+Salaam,+Tanzania&output=embed",

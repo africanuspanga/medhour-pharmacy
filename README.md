@@ -60,22 +60,22 @@ Built with **Next.js 16.2** (App Router), **TypeScript**, **Tailwind CSS v4**, a
 
    Open http://localhost:3000
 
-## Creating an admin user
+## Admin account
 
-1. Register a normal account at `/register` (or in Supabase → Authentication).
-2. In the Supabase SQL editor:
+There is exactly one admin account, hardcoded (see `supabase/admin-user.sql`):
 
-   ```sql
-   update public.profiles set is_admin = true where email = 'you@example.com';
-   ```
+- **Email:** `admin@medhour.co.tz`
+- **Password:** `Medhour@2026!`
 
-3. Log in and visit `/admin`.
+It is provisioned via the Supabase Auth admin API and granted `is_admin = true`
+on its profile — `supabase/admin-user.sql` contains the recreation command and
+the idempotent grant. Log in at `/login`, then visit `/admin`.
 
 ## Replacing sample content
 
 - **Product & category images**: the site ships with empty image placeholders. Upload real images from the admin dashboard (Products → edit → Images; Categories → edit). They are stored in the public `product-images` bucket.
 - **Sample products**: prices, pack sizes and prescription classifications in `supabase/seed.sql` are placeholders — verify every product against actual stock before going live.
-- **Contact details**: phone, WhatsApp, email and opening hours are placeholders in `src/lib/constants.ts` (and the `site_settings` table).
+- **Contact details**: phone, WhatsApp, email, address and opening hours live in `src/lib/constants.ts` (the `SITE` constant) and are shown on `/contact`.
 
 ## Project structure
 
@@ -104,40 +104,8 @@ supabase/
 2. Add the same environment variables from `.env.local` in Vercel → Settings → Environment Variables.
 3. Deploy. Set `NEXT_PUBLIC_SITE_URL` to the production domain so metadata, canonicals and the sitemap resolve correctly.
 
-## Deploy a static demo on Render
-
-A read-only static export of the storefront — for stakeholder demos — can be
-hosted on Render as a static site. It uses the local catalogue in
-`src/lib/fallback-data.ts` (no Supabase needed).
-
-**What works in the static demo:** browsing home/shop/categories/product pages,
-search (falls back to filtering the local catalogue in the browser), and the
-guest cart (localStorage).
-
-**What requires the full deployment (Vercel + Supabase):** checkout and order
-confirmation, accounts (login/register/profile/orders/addresses), prescription
-upload, order tracking, the contact form, and the admin dashboard. Links to
-those pages 404 in the static build because they are excluded from it.
-
-**Local run:**
-
-```bash
-npm run build:static   # produces out/
-npx serve out          # or python3 -m http.server -d out
-```
-
-`scripts/build-static.mjs` temporarily moves the server-only paths
-(`src/middleware.ts`, `src/app/admin`, `src/app/api`, `src/app/auth`,
-`(storefront)/account`, `checkout`, `login`, `register`, `forgot-password`,
-`reset-password`, `track-order`, `prescriptions`, `contact`) into
-`.static-exclude/`, runs `next build` with `BUILD_STATIC=1` (which enables
-`output: "export"`, unoptimized images and trailing slashes in
-`next.config.ts`), then always restores them. `npm run build` and
-`npm run dev` are unaffected.
-
-**Render:** the repo includes `render.yaml` (blueprint). In Render choose
-New → Blueprint, point it at the repo, and it creates a static site with
-`npm ci && npm run build:static` publishing `out/`.
+The app is fully dynamic — every page reads from Supabase at request time and
+`npm run build` always produces a server build. There is no static export.
 
 ## Compliance notes
 
