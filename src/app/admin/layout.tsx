@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { getAdminProfile } from "@/lib/supabase/admin-auth";
 import { AdminNav } from "./admin-nav";
 
@@ -40,9 +41,19 @@ export default async function AdminLayout({
   return (
     <div className="bg-surface">
       <header className="flex h-14 items-center justify-between border-b border-ink/10 bg-white px-4 print:hidden md:px-6">
-        <span className="text-sm font-bold text-ink">
-          Medhour <span className="text-brand">Admin</span>
-        </span>
+        <Link href="/admin" className="flex items-center gap-2.5" aria-label="Admin dashboard">
+          <Image
+            src="/medhour-logo.png"
+            alt="Medhour Pharmacy"
+            width={1098}
+            height={420}
+            className="h-8 w-auto"
+            priority
+          />
+          <span className="rounded-full bg-brand px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-white">
+            Admin
+          </span>
+        </Link>
         <span className="text-sm text-ink/60">{admin.full_name ?? admin.email}</span>
       </header>
       <div className="flex flex-col md:flex-row">
