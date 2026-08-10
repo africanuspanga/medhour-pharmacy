@@ -32,8 +32,8 @@ export default async function AdminPrescriptionsPage({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-bold text-ink">Prescriptions</h1>
-        <form>
-          <Select name="status" defaultValue={status ?? ""} className="w-auto">
+        <form className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+          <Select name="status" defaultValue={status ?? ""} className="w-full sm:w-auto">
             <option value="">All statuses</option>
             {Object.entries(PRESCRIPTION_STATUS_LABELS).map(([value, label]) => (
               <option key={value} value={value}>
@@ -41,7 +41,7 @@ export default async function AdminPrescriptionsPage({
               </option>
             ))}
           </Select>
-          <Button type="submit" size="sm" variant="outline" className="ml-2">
+          <Button type="submit" size="sm" variant="outline">
             Filter
           </Button>
         </form>
@@ -53,7 +53,30 @@ export default async function AdminPrescriptionsPage({
           description="Uploaded prescriptions will appear here."
         />
       ) : (
-        <div className="overflow-x-auto rounded-2xl bg-white shadow-sm">
+        <>
+          {/* Mobile: stacked prescription cards */}
+          <div className="space-y-3 md:hidden">
+            {rows.map((prescription) => (
+              <div key={prescription.id} className="rounded-2xl bg-white p-4 shadow-sm">
+                <div className="flex items-center justify-between gap-2">
+                  <Link
+                    href={`/admin/prescriptions/${prescription.id}`}
+                    className="min-w-0 font-medium text-brand hover:text-brand-dark"
+                  >
+                    {prescription.customer_name}
+                  </Link>
+                  <PrescriptionStatusBadge status={prescription.status} />
+                </div>
+                <p className="mt-1 text-sm text-ink/60">{prescription.phone}</p>
+                <p className="mt-1 text-xs text-ink/50">
+                  {formatDateTime(prescription.created_at)} ·{" "}
+                  <span className="capitalize">{prescription.fulfilment_method ?? "—"}</span>
+                </p>
+              </div>
+            ))}
+          </div>
+          {/* Desktop: table */}
+          <div className="hidden overflow-x-auto rounded-2xl bg-white shadow-sm md:block">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="border-b border-ink/10 text-left text-xs uppercase tracking-wide text-ink/50">
@@ -87,7 +110,8 @@ export default async function AdminPrescriptionsPage({
               ))}
             </tbody>
           </table>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

@@ -277,7 +277,37 @@ export default async function AdminDashboardPage() {
         {(recentOrders ?? []).length === 0 ? (
           <EmptyState title="No orders yet" description="New orders will appear here." />
         ) : (
-          <div className="overflow-x-auto rounded-3xl bg-white shadow-sm">
+          <>
+            {/* Mobile: stacked order cards */}
+            <div className="space-y-3 md:hidden">
+              {(recentOrders ?? []).map((order) => (
+                <div key={order.id} className="rounded-3xl bg-white p-4 shadow-sm">
+                  <div className="flex items-center justify-between gap-2">
+                    <Link
+                      href={`/admin/orders/${order.id}`}
+                      className="font-medium text-brand hover:text-brand-dark"
+                    >
+                      {order.order_number}
+                    </Link>
+                    <span className="shrink-0 text-xs text-ink/50">
+                      {formatDateTime(order.created_at)}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm text-ink">{order.customer_name}</p>
+                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-sm font-semibold text-ink">
+                      {formatTzs(Number(order.total_amount))}
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      <OrderStatusBadge status={order.order_status} />
+                      <PaymentStatusBadge status={order.payment_status} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Desktop: table */}
+            <div className="hidden overflow-x-auto rounded-3xl bg-white shadow-sm md:block">
             <table className="w-full min-w-[640px] text-sm">
               <thead>
                 <tr className="border-b border-ink/10 text-left text-xs uppercase tracking-wide text-ink/50">
@@ -309,7 +339,8 @@ export default async function AdminDashboardPage() {
                 ))}
               </tbody>
             </table>
-          </div>
+            </div>
+          </>
         )}
       </section>
     </div>

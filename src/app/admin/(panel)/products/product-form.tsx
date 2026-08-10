@@ -150,7 +150,7 @@ export function ProductForm({
         <h2 className="text-sm font-semibold uppercase tracking-wide text-ink/50">
           Pricing &amp; stock
         </h2>
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
           <Field label="Price (TZS)" required error={errors.price}>
             <Input
               name="price"

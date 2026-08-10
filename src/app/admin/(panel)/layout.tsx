@@ -41,7 +41,7 @@ export default async function AdminLayout({
   return (
     <div className="bg-surface">
       <header className="flex h-14 items-center justify-between border-b border-ink/10 bg-white px-4 print:hidden md:px-6">
-        <Link href="/admin" className="flex items-center gap-2.5" aria-label="Admin dashboard">
+        <Link href="/admin" className="flex shrink-0 items-center gap-2.5" aria-label="Admin dashboard">
           <Image
             src="/medhour-logo.png"
             alt="Medhour Pharmacy"
@@ -54,7 +54,7 @@ export default async function AdminLayout({
             Admin
           </span>
         </Link>
-        <span className="text-sm text-ink/60">{admin.full_name ?? admin.email}</span>
+        <span className="min-w-0 truncate text-sm text-ink/60">{admin.full_name ?? admin.email}</span>
       </header>
       <div className="flex flex-col md:flex-row">
         <AdminNav />

@@ -79,15 +79,15 @@ export default async function AdminOrdersPage({
         </a>
       </div>
 
-      <form className="flex flex-wrap items-end gap-2 rounded-2xl bg-white p-3 shadow-sm">
-        <div className="min-w-48 flex-1">
+      <form className="flex flex-col gap-2 rounded-2xl bg-white p-3 shadow-sm sm:flex-row sm:flex-wrap sm:items-end">
+        <div className="w-full sm:min-w-48 sm:flex-1">
           <Input
             name="q"
             placeholder="Search order number, name or phone…"
             defaultValue={q ?? ""}
           />
         </div>
-        <Select name="status" defaultValue={status ?? ""} className="w-auto">
+        <Select name="status" defaultValue={status ?? ""} className="w-full sm:w-auto">
           <option value="">All order statuses</option>
           {Object.entries(ORDER_STATUS_LABELS).map(([value, label]) => (
             <option key={value} value={value}>
@@ -95,7 +95,7 @@ export default async function AdminOrdersPage({
             </option>
           ))}
         </Select>
-        <Select name="payment" defaultValue={payment ?? ""} className="w-auto">
+        <Select name="payment" defaultValue={payment ?? ""} className="w-full sm:w-auto">
           <option value="">All payment statuses</option>
           {Object.entries(PAYMENT_STATUS_LABELS).map(([value, label]) => (
             <option key={value} value={value}>
@@ -103,7 +103,7 @@ export default async function AdminOrdersPage({
             </option>
           ))}
         </Select>
-        <Button type="submit" size="sm" variant="outline">
+        <Button type="submit" size="sm" variant="outline" className="w-full sm:w-auto">
           Filter
         </Button>
       </form>
@@ -112,7 +112,42 @@ export default async function AdminOrdersPage({
         <EmptyState title="No orders found" description="Try adjusting your search or filters." />
       ) : (
         <>
-          <div className="overflow-x-auto rounded-2xl bg-white shadow-sm">
+          <>
+            {/* Mobile: stacked order cards */}
+            <div className="space-y-3 md:hidden">
+              {rows.map((order) => (
+                <div key={order.id} className="rounded-2xl bg-white p-4 shadow-sm">
+                  <div className="flex items-center justify-between gap-2">
+                    <Link
+                      href={`/admin/orders/${order.id}`}
+                      className="font-medium text-brand hover:text-brand-dark"
+                    >
+                      {order.order_number}
+                    </Link>
+                    <span className="shrink-0 text-xs text-ink/50">
+                      {formatDateTime(order.created_at)}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm text-ink">
+                    {order.customer_name} <span className="text-ink/60">· {order.phone}</span>
+                  </p>
+                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-sm font-semibold text-ink">
+                      {formatTzs(Number(order.total_amount))}
+                      <span className="ml-1 text-xs font-normal text-ink/50">
+                        · {order.order_items?.[0]?.count ?? 0} items
+                      </span>
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      <OrderStatusBadge status={order.order_status} />
+                      <PaymentStatusBadge status={order.payment_status} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Desktop: table */}
+            <div className="hidden overflow-x-auto rounded-2xl bg-white shadow-sm md:block">
             <table className="w-full min-w-[860px] text-sm">
               <thead>
                 <tr className="border-b border-ink/10 text-left text-xs uppercase tracking-wide text-ink/50">
@@ -154,7 +189,8 @@ export default async function AdminOrdersPage({
                 ))}
               </tbody>
             </table>
-          </div>
+            </div>
+          </>
 
           <div className="flex items-center justify-between text-sm text-ink/60">
             <span>

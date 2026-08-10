@@ -77,11 +77,11 @@ export default async function AdminProductsPage({
         </Link>
       </div>
 
-      <form className="flex flex-wrap items-end gap-2 rounded-2xl bg-white p-3 shadow-sm">
-        <div className="min-w-40 flex-1">
+      <form className="flex flex-col gap-2 rounded-2xl bg-white p-3 shadow-sm sm:flex-row sm:flex-wrap sm:items-end">
+        <div className="w-full sm:min-w-40 sm:flex-1">
           <Input name="q" placeholder="Search by name…" defaultValue={q ?? ""} />
         </div>
-        <Select name="category" defaultValue={category ?? ""} className="w-auto">
+        <Select name="category" defaultValue={category ?? ""} className="w-full sm:w-auto">
           <option value="">All categories</option>
           {(categories ?? []).map((c) => (
             <option key={c.id} value={c.id}>
@@ -99,7 +99,7 @@ export default async function AdminProductsPage({
           />
           Show archived
         </label>
-        <Button type="submit" size="sm" variant="outline">
+        <Button type="submit" size="sm" variant="outline" className="w-full sm:w-auto">
           Filter
         </Button>
       </form>
@@ -115,7 +115,92 @@ export default async function AdminProductsPage({
           }
         />
       ) : (
-        <div className="overflow-x-auto rounded-2xl bg-white shadow-sm">
+        <>
+          {/* Mobile: stacked product cards */}
+          <div className="space-y-3 md:hidden">
+            {rows.map((product) => (
+              <div key={product.id} className="rounded-2xl bg-white p-4 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <ProductImage
+                    src={product.images?.[0]?.image_url}
+                    alt={product.name}
+                    className="h-12 w-12 shrink-0 rounded-lg"
+                    sizes="48px"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <Link
+                      href={`/admin/products/${product.id}`}
+                      className="font-medium text-ink hover:text-brand"
+                    >
+                      {product.name}
+                    </Link>
+                    <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                      {product.archived_at && <Badge tone="grey">Archived</Badge>}
+                      {product.requires_prescription && <Badge tone="blue">Rx</Badge>}
+                      {product.is_featured && <Badge tone="green">Featured</Badge>}
+                    </div>
+                    <p className="mt-1 text-xs text-ink/60">{product.category?.name ?? "—"}</p>
+                    <p className="mt-1 text-sm">
+                      <span className="font-medium text-ink">
+                        {formatTzs(product.sale_price ?? product.price)}
+                      </span>
+                      {product.sale_price != null && (
+                        <span className="ml-1 text-xs text-ink/40 line-through">
+                          {formatTzs(product.price)}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <div className="shrink-0">
+                    <StockCell product={product} />
+                  </div>
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <form
+                    action={setProductActive.bind(null, product.id, !product.is_active)}
+                    className="flex items-center gap-1.5"
+                  >
+                    <button
+                      type="submit"
+                      title={product.is_active ? "Click to deactivate" : "Click to activate"}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                        product.is_active ? "bg-brand" : "bg-ink/20"
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          product.is_active ? "translate-x-6" : "translate-x-1"
+                        }`}
+                      />
+                    </button>
+                    <span className="text-xs text-ink/60">
+                      {product.is_active ? "Active" : "Inactive"}
+                    </span>
+                  </form>
+                  <Link href={`/admin/products/${product.id}`}>
+                    <Button size="sm" variant="outline" type="button">
+                      Edit
+                    </Button>
+                  </Link>
+                  {product.archived_at ? (
+                    <form action={unarchiveProduct.bind(null, product.id)}>
+                      <Button size="sm" variant="ghost" type="submit">
+                        Unarchive
+                      </Button>
+                    </form>
+                  ) : (
+                    <form action={archiveProduct.bind(null, product.id)}>
+                      <Button size="sm" variant="ghost" type="submit" className="text-red-600">
+                        Archive
+                      </Button>
+                    </form>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Desktop: table */}
+          <div className="hidden overflow-x-auto rounded-2xl bg-white shadow-sm md:block">
           <table className="w-full min-w-[900px] text-sm">
             <thead>
               <tr className="border-b border-ink/10 text-left text-xs uppercase tracking-wide text-ink/50">
@@ -219,7 +304,8 @@ export default async function AdminProductsPage({
               ))}
             </tbody>
           </table>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

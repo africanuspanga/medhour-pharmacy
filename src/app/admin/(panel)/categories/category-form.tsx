@@ -106,7 +106,7 @@ export function CategoryImageUpload({ category }: { category: Category }) {
           name="file"
           accept="image/*"
           required
-          className="text-sm text-ink file:mr-3 file:rounded-full file:border-0 file:bg-brand-light file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand-dark"
+          className="min-w-0 max-w-full text-sm text-ink file:mr-3 file:rounded-full file:border-0 file:bg-brand-light file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand-dark"
         />
         <Button type="submit" size="sm" variant="outline" disabled={pending}>
           {pending ? "Uploading…" : "Upload"}

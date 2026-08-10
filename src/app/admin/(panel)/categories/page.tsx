@@ -43,7 +43,42 @@ export default async function AdminCategoriesPage({
           {rows.length === 0 ? (
             <EmptyState title="No categories yet" description="Create your first category with the form." />
           ) : (
-            <div className="overflow-x-auto rounded-2xl bg-white shadow-sm">
+            <>
+              {/* Mobile: stacked category cards */}
+              <div className="space-y-3 md:hidden">
+                {rows.map((category) => (
+                  <div key={category.id} className="rounded-2xl bg-white p-4 shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <ProductImage
+                        src={category.image_url}
+                        alt={category.name}
+                        className="h-9 w-9 shrink-0 rounded-lg"
+                        sizes="36px"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-medium text-ink">{category.name}</p>
+                        <p className="truncate text-xs text-ink/60">
+                          {category.slug} · Sort {category.sort_order}
+                        </p>
+                      </div>
+                      {category.is_active ? (
+                        <Badge tone="green">Active</Badge>
+                      ) : (
+                        <Badge tone="grey">Hidden</Badge>
+                      )}
+                    </div>
+                    <div className="mt-3">
+                      <Link href={`/admin/categories?edit=${category.id}`}>
+                        <Button size="sm" variant="outline" type="button" className="w-full">
+                          Edit
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Desktop: table */}
+              <div className="hidden overflow-x-auto rounded-2xl bg-white shadow-sm md:block">
               <table className="w-full min-w-[560px] text-sm">
                 <thead>
                   <tr className="border-b border-ink/10 text-left text-xs uppercase tracking-wide text-ink/50">
@@ -88,7 +123,8 @@ export default async function AdminCategoriesPage({
                   ))}
                 </tbody>
               </table>
-            </div>
+              </div>
+            </>
           )}
         </div>
       </div>

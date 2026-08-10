@@ -42,12 +42,12 @@ export default async function AdminMessagesPage() {
             >
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-semibold text-ink">{m.name}</span>
-                <span className="text-sm text-ink/60">{m.contact}</span>
+                <span className="min-w-0 break-all text-sm text-ink/60">{m.contact}</span>
                 {!m.is_read && <Badge tone="blue">New</Badge>}
                 <span className="ml-auto text-xs text-ink/50">{formatDateTime(m.created_at)}</span>
               </div>
               <p className="mt-2 whitespace-pre-line text-sm text-ink/80">{m.message}</p>
-              <div className="mt-3 flex gap-2">
+              <div className="mt-3 flex flex-wrap gap-2">
                 <form action={setMessageRead}>
                   <input type="hidden" name="id" value={m.id} />
                   <input type="hidden" name="is_read" value={String(!m.is_read)} />

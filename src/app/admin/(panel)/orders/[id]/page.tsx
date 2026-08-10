@@ -179,7 +179,49 @@ export default async function AdminOrderDetailPage({
             </div>
           </section>
 
-          <section className="overflow-x-auto rounded-2xl bg-white shadow-sm">
+          <section className="rounded-2xl bg-white shadow-sm">
+            {/* Mobile: stacked item list */}
+            <div className="md:hidden">
+              <ul className="divide-y divide-ink/5">
+                {typedItems.map((item) => (
+                  <li key={item.id} className="flex items-start justify-between gap-3 p-4">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-ink">
+                        {item.product_name}
+                        {item.pack_size && <span className="text-ink/50"> — {item.pack_size}</span>}
+                      </p>
+                      <p className="mt-0.5 text-xs text-ink/60">
+                        {formatTzs(Number(item.unit_price))} × {item.quantity}
+                        {item.requires_prescription && (
+                          <span className="ml-2 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                            Rx
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                    <span className="shrink-0 text-sm font-medium text-ink">
+                      {formatTzs(Number(item.line_total))}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <div className="space-y-1 border-t border-ink/10 p-4 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-ink/60">Subtotal</span>
+                  <span className="text-ink">{formatTzs(Number(typedOrder.subtotal))}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-ink/60">Delivery fee</span>
+                  <span className="text-ink">{formatTzs(Number(typedOrder.delivery_fee))}</span>
+                </div>
+                <div className="flex justify-between font-bold">
+                  <span className="text-ink">Total</span>
+                  <span className="text-ink">{formatTzs(Number(typedOrder.total_amount))}</span>
+                </div>
+              </div>
+            </div>
+            {/* Desktop: table */}
+            <div className="hidden overflow-x-auto md:block">
             <table className="w-full min-w-[560px] text-sm">
               <thead>
                 <tr className="border-b border-ink/10 text-left text-xs uppercase tracking-wide text-ink/50">
@@ -222,6 +264,7 @@ export default async function AdminOrderDetailPage({
                 </tr>
               </tfoot>
             </table>
+            </div>
           </section>
 
           <section className="rounded-2xl bg-white p-5 shadow-sm">

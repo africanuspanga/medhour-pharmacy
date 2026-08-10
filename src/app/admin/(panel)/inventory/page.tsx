@@ -67,8 +67,8 @@ export default async function AdminInventoryPage({
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-bold text-ink">Inventory</h1>
-        <form className="flex gap-2">
-          <Input name="q" placeholder="Search product…" defaultValue={q ?? ""} className="w-56" />
+        <form className="flex w-full gap-2 sm:w-auto">
+          <Input name="q" placeholder="Search product…" defaultValue={q ?? ""} className="flex-1 sm:w-56" />
           <Button type="submit" size="sm" variant="outline">
             Search
           </Button>
@@ -78,7 +78,43 @@ export default async function AdminInventoryPage({
       {rows.length === 0 ? (
         <EmptyState title="No products found" description="Try a different search." />
       ) : (
-        <div className="overflow-x-auto rounded-2xl bg-white shadow-sm">
+        <>
+          {/* Mobile: stacked product cards */}
+          <div className="space-y-3 md:hidden">
+            {rows.map((product) => {
+              const out = product.stock_quantity <= 0;
+              const low = !out && product.stock_quantity <= product.low_stock_threshold;
+              return (
+                <div
+                  key={product.id}
+                  className={`rounded-2xl p-4 shadow-sm ${
+                    out ? "bg-red-50" : low ? "bg-amber-50" : "bg-white"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="min-w-0 font-medium text-ink">{product.name}</p>
+                    <span className="shrink-0">
+                      {out ? (
+                        <Badge tone="red">Out of stock</Badge>
+                      ) : low ? (
+                        <Badge tone="amber">Low — {product.stock_quantity}</Badge>
+                      ) : (
+                        <span className="text-sm text-ink">{product.stock_quantity} in stock</span>
+                      )}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-ink/60">
+                    Low-stock threshold: {product.low_stock_threshold}
+                  </p>
+                  <div className="mt-3">
+                    <StockAdjustForm productId={product.id} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {/* Desktop: table */}
+          <div className="hidden overflow-x-auto rounded-2xl bg-white shadow-sm md:block">
           <table className="w-full min-w-[760px] text-sm">
             <thead>
               <tr className="border-b border-ink/10 text-left text-xs uppercase tracking-wide text-ink/50">
@@ -118,7 +154,8 @@ export default async function AdminInventoryPage({
               })}
             </tbody>
           </table>
-        </div>
+          </div>
+        </>
       )}
 
       <section>
@@ -128,7 +165,35 @@ export default async function AdminInventoryPage({
         {movementRows.length === 0 ? (
           <EmptyState title="No movements yet" description="Stock changes will be recorded here." />
         ) : (
-          <div className="overflow-x-auto rounded-2xl bg-white shadow-sm">
+          <>
+            {/* Mobile: stacked movement cards */}
+            <div className="space-y-3 md:hidden">
+              {movementRows.map((movement) => (
+                <div key={movement.id} className="rounded-2xl bg-white p-4 shadow-sm">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="min-w-0 text-sm font-medium text-ink">
+                      {movement.product?.name ?? "—"}
+                    </p>
+                    <span
+                      className={`shrink-0 text-sm font-medium ${
+                        movement.change > 0 ? "text-brand-dark" : "text-red-600"
+                      }`}
+                    >
+                      {movement.change > 0 ? `+${movement.change}` : movement.change}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-ink/60">
+                    {MOVEMENT_LABELS[movement.movement_type] ?? movement.movement_type}
+                    {movement.reason ? ` · ${movement.reason}` : ""}
+                  </p>
+                  <p className="mt-1 text-xs text-ink/50">
+                    {formatDateTime(movement.created_at)} · {movement.admin?.full_name ?? "—"}
+                  </p>
+                </div>
+              ))}
+            </div>
+            {/* Desktop: table */}
+            <div className="hidden overflow-x-auto rounded-2xl bg-white shadow-sm md:block">
             <table className="w-full min-w-[720px] text-sm">
               <thead>
                 <tr className="border-b border-ink/10 text-left text-xs uppercase tracking-wide text-ink/50">
@@ -161,7 +226,8 @@ export default async function AdminInventoryPage({
                 ))}
               </tbody>
             </table>
-          </div>
+            </div>
+          </>
         )}
       </section>
     </div>

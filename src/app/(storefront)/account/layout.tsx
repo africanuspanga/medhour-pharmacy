@@ -22,7 +22,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
     <div className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
       <CartSync />
       <h1 className="text-2xl font-bold text-ink sm:text-3xl">My Account</h1>
-      <p className="mt-1 text-sm text-ink/60">{user.email}</p>
+      <p className="mt-1 break-all text-sm text-ink/60">{user.email}</p>
       <div className="mt-6 grid gap-6 sm:grid-cols-[220px_1fr]">
         <AccountNav />
         <div className="min-w-0">{children}</div>

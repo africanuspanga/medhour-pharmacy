@@ -153,7 +153,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
           {typedOrder.delivery_method === "delivery" && (
             <div className="flex justify-between gap-4">
               <dt className="shrink-0 text-ink/60">Address</dt>
-              <dd className="text-right text-ink">
+              <dd className="min-w-0 break-words text-right text-ink">
                 {[typedOrder.delivery_address, typedOrder.landmark, typedOrder.district, typedOrder.region]
                   .filter(Boolean)
                   .join(", ")}
@@ -169,7 +169,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
           {typedOrder.customer_notes && (
             <div className="flex justify-between gap-4">
               <dt className="shrink-0 text-ink/60">Your notes</dt>
-              <dd className="text-right text-ink">{typedOrder.customer_notes}</dd>
+              <dd className="min-w-0 break-words text-right text-ink">{typedOrder.customer_notes}</dd>
             </div>
           )}
         </dl>
