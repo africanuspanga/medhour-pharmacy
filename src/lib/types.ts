@@ -65,6 +65,8 @@ export interface Product {
   id: UUID;
   name: string;
   slug: string;
+  /** Verbatim item name from the pharmacy's stock system. Admin reference only. */
+  internal_name: string | null;
   generic_name: string | null;
   brand_id: UUID | null;
   category_id: UUID | null;

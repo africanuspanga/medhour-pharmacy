@@ -15,7 +15,7 @@ Style: clean white backgrounds, green accents, rounded-2xl cards, generous spaci
 
 ## Existing building blocks — reuse, don't reinvent
 
-- Types: `src/lib/types.ts` (Product, Category, Order, OrderStatus, etc.)
+- Types: `src/lib/types.ts` (Product, Category, Order, OrderStatus, etc.) — `Product.internal_name` is the pharmacy's own stock-list name, admin-only, never rendered on the storefront
 - Utils: `src/lib/utils.ts` — `cn`, `formatTzs(n)` → `TZS 5,000`, `effectivePrice`, `stockStatus`, `formatDate(Time)`, `ORDER_STATUS_LABELS`, `PAYMENT_STATUS_LABELS`, `PAYMENT_METHOD_LABELS`
 - Constants: `src/lib/constants.ts` — `SITE` (address, phone, whatsapp, mapsEmbedUrl, mapsDirectionsUrl, openingHours), `WHATSAPP_URL`, `MEDICINE_DISCLAIMER`, `PRODUCTS_PER_PAGE`
 - Supabase clients: `src/lib/supabase/client.ts` (browser), `server.ts` (RSC/actions, `await createClient()`), `admin.ts` (service role — server only), `admin-auth.ts` (`requireAdmin()` throws unless caller is admin)
@@ -27,9 +27,30 @@ Style: clean white backgrounds, green accents, rounded-2xl cards, generous spaci
 - Category: `src/components/category/category-card.tsx`
 - Layout: `src/components/layout/header.tsx`, `footer.tsx`, `src/components/whatsapp-float.tsx` — already wired into `src/app/layout.tsx`
 
+## Catalogue
+
+The 692 products and 17 categories come from the pharmacy's own `MEDHOUR PRICE LIST.xlsx`.
+Never hand-edit `supabase/seed.sql` or `scripts/catalogue.json` — both are generated:
+
+```bash
+python3 scripts/build_catalogue.py   # xlsx -> scripts/catalogue.json + CATALOGUE-REVIEW.md
+python3 scripts/build_seed.py        # catalogue.json -> supabase/seed.sql
+node --env-file=.env.local scripts/load-catalogue.mjs   # catalogue.json -> live Supabase
+```
+
+To change how one row is published (name, category, generic), add an entry to
+`scripts/overrides.json` keyed by its spreadsheet row number, then re-run the build.
+Price and stock always come straight from the spreadsheet and cannot be overridden.
+
+The spreadsheet itself is **gitignored** — it holds supplier cost prices and this
+repo is public. Never commit `*.xlsx`, and never carry the sheet's `Cost` column
+into `catalogue.json`, `seed.sql` or the database; only `Selling Price` is public.
+
 ## Rules
 
 - All data comes from Supabase — no hard-coded products or categories in pages.
+- Products and categories have **no images** — the pharmacy uploads them from the admin
+  dashboard. Never re-add sample images or commit files to `public/product-images`.
 - Server Components fetch via `src/lib/data.ts` or the server Supabase client. Client components use the browser client.
 - Admin mutations live in server actions (`"use server"`) under `src/lib/actions/` and MUST call `requireAdmin()` before using the service-role client.
 - Product/category images may not exist yet — `ProductImage` handles the empty placeholder.

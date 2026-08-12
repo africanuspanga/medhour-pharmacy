@@ -122,7 +122,18 @@ export function ProductForm({
               placeholder="e.g. 10 tablets"
             />
           </Field>
+          <Field label="Internal stock name">
+            <Input
+              name="internal_name"
+              defaultValue={product?.internal_name ?? ""}
+              placeholder="Name used in the pharmacy price list"
+            />
+          </Field>
         </div>
+        <p className="-mt-1 text-xs text-ink/50">
+          The internal stock name is never shown to customers — it is only here so
+          you can match this product against your own price list.
+        </p>
         <Field label="Short description">
           <Input name="short_description" defaultValue={product?.short_description ?? ""} />
         </Field>

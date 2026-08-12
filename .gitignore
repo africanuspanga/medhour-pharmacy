@@ -40,3 +40,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Pharmacy source data — contains supplier cost prices, keep out of git
+MEDHOUR PRICE LIST.xlsx
+*.xlsx

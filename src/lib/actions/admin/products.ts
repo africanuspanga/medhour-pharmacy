@@ -96,6 +96,7 @@ export async function upsertProduct(
     const payload = {
       name,
       slug,
+      internal_name: nullable(str(formData, "internal_name")),
       generic_name: nullable(str(formData, "generic_name")),
       brand_id: brandId,
       category_id: nullable(str(formData, "category_id")),

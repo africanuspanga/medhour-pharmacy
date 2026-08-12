@@ -5,11 +5,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/field";
 import { EmptyState } from "@/components/ui/feedback";
+import { Pagination } from "@/components/storefront/pagination";
 import { StockAdjustForm } from "./stock-adjust-form";
 
 export const metadata: Metadata = { title: "Inventory — Admin" };
 
 export const dynamic = "force-dynamic";
+
+/** The catalogue runs to several hundred lines — page it. */
+const PER_PAGE = 50;
 
 const MOVEMENT_LABELS: Record<string, string> = {
   order_placed: "Order placed",
@@ -21,6 +25,7 @@ const MOVEMENT_LABELS: Record<string, string> = {
 interface ProductRow {
   id: string;
   name: string;
+  internal_name: string | null;
   stock_quantity: number;
   low_stock_threshold: number;
 }
@@ -38,21 +43,32 @@ interface MovementRow {
 export default async function AdminInventoryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; page?: string; low?: string }>;
 }) {
-  const { q } = await searchParams;
+  const { q, page: pageParam, low } = await searchParams;
+  const page = Math.max(Number(pageParam) || 1, 1);
   const supabase = await createClient();
 
   let productQuery = supabase
     .from("products")
-    .select("id, name, stock_quantity, low_stock_threshold")
+    .select("id, name, internal_name, stock_quantity, low_stock_threshold", {
+      count: "exact",
+    })
     .is("archived_at", null)
     .order("stock_quantity", { ascending: true })
     .order("name");
-  if (q) productQuery = productQuery.ilike("name", `%${q}%`);
+  if (q) {
+    const term = q.replaceAll(",", " ").trim();
+    productQuery = productQuery.or(
+      `name.ilike.%${term}%,internal_name.ilike.%${term}%,sku.ilike.%${term}%`
+    );
+  }
+  // "Needs restocking" — anything at or below its own low-stock threshold.
+  if (low) productQuery = productQuery.lte("stock_quantity", 10);
 
-  const [{ data: products }, { data: movements }] = await Promise.all([
-    productQuery,
+  const from = (page - 1) * PER_PAGE;
+  const [{ data: products, count }, { data: movements }] = await Promise.all([
+    productQuery.range(from, from + PER_PAGE - 1),
     supabase
       .from("inventory_movements")
       .select("id, change, movement_type, reason, created_at, product:products(name), admin:profiles(full_name)")
@@ -62,13 +78,40 @@ export default async function AdminInventoryPage({
 
   const rows = (products ?? []) as ProductRow[];
   const movementRows = (movements ?? []) as unknown as MovementRow[];
+  const total = count ?? 0;
+  const totalPages = Math.ceil(total / PER_PAGE);
+  const pageParams: Record<string, string> = {};
+  if (q) pageParams.q = q;
+  if (low) pageParams.low = low;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-bold text-ink">Inventory</h1>
-        <form className="flex w-full gap-2 sm:w-auto">
-          <Input name="q" placeholder="Search product…" defaultValue={q ?? ""} className="flex-1 sm:w-56" />
+        <div>
+          <h1 className="text-xl font-bold text-ink">Inventory</h1>
+          <p className="text-sm text-ink/60">
+            {total.toLocaleString()} {total === 1 ? "product" : "products"}
+            {totalPages > 1 && ` — page ${page} of ${totalPages}`}
+            {low && " — low stock only"}
+          </p>
+        </div>
+        <form className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+          <Input
+            name="q"
+            placeholder="Search name, stock name or SKU…"
+            defaultValue={q ?? ""}
+            className="flex-1 sm:w-56"
+          />
+          <label className="flex items-center gap-2 text-sm text-ink/70">
+            <input
+              type="checkbox"
+              name="low"
+              value="1"
+              defaultChecked={low === "1"}
+              className="h-4 w-4 rounded border-ink/20 accent-brand"
+            />
+            Low stock only
+          </label>
           <Button type="submit" size="sm" variant="outline">
             Search
           </Button>
@@ -92,7 +135,14 @@ export default async function AdminInventoryPage({
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <p className="min-w-0 font-medium text-ink">{product.name}</p>
+                    <div className="min-w-0">
+                      <p className="font-medium text-ink">{product.name}</p>
+                      {product.internal_name && (
+                        <p className="truncate text-xs text-ink/40">
+                          {product.internal_name}
+                        </p>
+                      )}
+                    </div>
                     <span className="shrink-0">
                       {out ? (
                         <Badge tone="red">Out of stock</Badge>
@@ -135,7 +185,14 @@ export default async function AdminInventoryPage({
                       out ? "bg-red-50" : low ? "bg-amber-50" : ""
                     }`}
                   >
-                    <td className="px-4 py-3 font-medium text-ink">{product.name}</td>
+                    <td className="px-4 py-3">
+                      <span className="font-medium text-ink">{product.name}</span>
+                      {product.internal_name && (
+                        <span className="block text-xs text-ink/40">
+                          {product.internal_name}
+                        </span>
+                      )}
+                    </td>
                     <td className="px-4 py-3">
                       {out ? (
                         <Badge tone="red">Out of stock</Badge>
@@ -155,6 +212,7 @@ export default async function AdminInventoryPage({
             </tbody>
           </table>
           </div>
+          <Pagination page={page} totalPages={totalPages} searchParams={pageParams} />
         </>
       )}
 

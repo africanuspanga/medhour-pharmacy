@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input, Select } from "@/components/ui/field";
 import { EmptyState } from "@/components/ui/feedback";
 import { ProductImage } from "@/components/product/product-image";
+import { Pagination } from "@/components/storefront/pagination";
 import {
   archiveProduct,
   setProductActive,
@@ -17,9 +18,13 @@ export const metadata: Metadata = { title: "Products — Admin" };
 
 export const dynamic = "force-dynamic";
 
+/** The catalogue runs to several hundred lines — page it. */
+const PER_PAGE = 50;
+
 interface ProductRow {
   id: string;
   name: string;
+  internal_name: string | null;
   price: number;
   sale_price: number | null;
   stock_quantity: number;
@@ -45,33 +50,59 @@ function StockCell({ product }: { product: ProductRow }) {
 export default async function AdminProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; category?: string; archived?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    category?: string;
+    archived?: string;
+    page?: string;
+  }>;
 }) {
-  const { q, category, archived } = await searchParams;
+  const { q, category, archived, page: pageParam } = await searchParams;
+  const page = Math.max(Number(pageParam) || 1, 1);
   const supabase = await createClient();
 
   let query = supabase
     .from("products")
     .select(
-      "id, name, price, sale_price, stock_quantity, low_stock_threshold, is_featured, requires_prescription, is_active, archived_at, category:categories(name), images:product_images(image_url)"
+      "id, name, internal_name, price, sale_price, stock_quantity, low_stock_threshold, is_featured, requires_prescription, is_active, archived_at, category:categories(name), images:product_images(image_url)",
+      { count: "exact" }
     )
     .order("name");
 
   if (!archived) query = query.is("archived_at", null);
-  if (q) query = query.ilike("name", `%${q}%`);
+  // Staff search by the customer-facing name, their own stock name, or the SKU.
+  if (q) {
+    const term = q.replaceAll(",", " ").trim();
+    query = query.or(
+      `name.ilike.%${term}%,internal_name.ilike.%${term}%,sku.ilike.%${term}%`
+    );
+  }
   if (category) query = query.eq("category_id", category);
 
-  const [{ data: products }, { data: categories }] = await Promise.all([
-    query,
+  const from = (page - 1) * PER_PAGE;
+  const [{ data: products, count }, { data: categories }] = await Promise.all([
+    query.range(from, from + PER_PAGE - 1),
     supabase.from("categories").select("id, name").order("sort_order"),
   ]);
 
   const rows = (products ?? []) as unknown as ProductRow[];
+  const total = count ?? 0;
+  const totalPages = Math.ceil(total / PER_PAGE);
+  const pageParams: Record<string, string> = {};
+  if (q) pageParams.q = q;
+  if (category) pageParams.category = category;
+  if (archived) pageParams.archived = archived;
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-bold text-ink">Products</h1>
+        <div>
+          <h1 className="text-xl font-bold text-ink">Products</h1>
+          <p className="text-sm text-ink/60">
+            {total.toLocaleString()} {total === 1 ? "product" : "products"}
+            {totalPages > 1 && ` — page ${page} of ${totalPages}`}
+          </p>
+        </div>
         <Link href="/admin/products/new">
           <Button size="sm">Add product</Button>
         </Link>
@@ -79,7 +110,11 @@ export default async function AdminProductsPage({
 
       <form className="flex flex-col gap-2 rounded-2xl bg-white p-3 shadow-sm sm:flex-row sm:flex-wrap sm:items-end">
         <div className="w-full sm:min-w-40 sm:flex-1">
-          <Input name="q" placeholder="Search by name…" defaultValue={q ?? ""} />
+          <Input
+            name="q"
+            placeholder="Search by name, stock name or SKU…"
+            defaultValue={q ?? ""}
+          />
         </div>
         <Select name="category" defaultValue={category ?? ""} className="w-full sm:w-auto">
           <option value="">All categories</option>
@@ -139,6 +174,11 @@ export default async function AdminProductsPage({
                       {product.requires_prescription && <Badge tone="blue">Rx</Badge>}
                       {product.is_featured && <Badge tone="green">Featured</Badge>}
                     </div>
+                    {product.internal_name && (
+                      <p className="mt-0.5 truncate text-xs text-ink/40">
+                        {product.internal_name}
+                      </p>
+                    )}
                     <p className="mt-1 text-xs text-ink/60">{product.category?.name ?? "—"}</p>
                     <p className="mt-1 text-sm">
                       <span className="font-medium text-ink">
@@ -240,6 +280,9 @@ export default async function AdminProductsPage({
                             Archived
                           </Badge>
                         )}
+                        {product.internal_name && (
+                          <p className="text-xs text-ink/40">{product.internal_name}</p>
+                        )}
                       </div>
                     </div>
                   </td>
@@ -305,6 +348,7 @@ export default async function AdminProductsPage({
             </tbody>
           </table>
           </div>
+          <Pagination page={page} totalPages={totalPages} searchParams={pageParams} />
         </>
       )}
     </div>
